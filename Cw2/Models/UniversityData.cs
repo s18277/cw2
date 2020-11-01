@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace Cw2.Models
 {
     /// <summary>
-    ///     Klasa przechowująca dane o wszystkich studentach i liczby studentów na poszczególnych kierunkach. Obiekt tej
+    ///     Klasa przechowująca dane o wszystkich studentach i liczbę studentów na poszczególnych kierunkach. Obiekt tej
     ///     klasy zostanie faktycznie serializowany do pliku.
     /// </summary>
     [Serializable]

@@ -11,7 +11,7 @@ namespace Cw2
 {
     /// <summary>
     ///     <para>
-    ///         Klasa pomocnicza veryfikująca poprawność przekazanych do programu argumentów.
+    ///         Klasa pomocnicza weryfikująca poprawność przekazanych do programu argumentów.
     ///         Jest stworzona w sposób generyczny, więc nie trzeba jej modyfikować w przypadku zmiany danych do parsowania.
     ///         Będzie wymagała jedynie modyfikacji w momencie, gdy chcemy dodać nowy sposób zapisu danych
     ///         (metoda <see cref="DetermineCorrectSerializer" />).

@@ -13,7 +13,7 @@ namespace Cw2.Parsers
     ///         służy przekazany obiekt <see cref="IFieldsToObjectParser{TSerializable}" />.
     ///     </para>
     ///     <para>
-    ///         Rozdzielenie dzielenia pliku na pola i parsowanie pól do obiektu pozwala na uniezależnienie tyc dwóch
+    ///         Rozdzielenie dzielenia pliku na pola i parsowanie pól do obiektu pozwala na uniezależnienie tych dwóch
     ///         operacji. Klasa <see cref="LineDelimitedParser{T}" /> może służyć do parsowania plików z różnymi delimiterami
     ///         różnych rodzajów obiektów.
     ///     </para>

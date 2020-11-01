@@ -3,14 +3,14 @@
 ## Autor: *Paweł Rutkowski s18277*
 
 ### Dodanie nowego sposobu zapisu danych
-Dodanie nowego sposobu danych wymaga jedynie dodanie nowej implementacji interfejsu `Cw2.Serializers.IObjectSerializer`
+Dodanie nowego sposobu zapisu danych wymaga jedynie dodanie nowej implementacji interfejsu `Cw2.Serializers.IObjectSerializer`
 i dodanie obsługi przekazanego parametru do metody `Cw2.ArgumentParser.DetermineCorrectSerializer` i zawartej w niej
 konstrukcji `switch`.
 
 Dzięki zastosowaniu interfejsów i typów generycznych nie wymagane są żadne inne działania.
 
 ### Dodanie nowego rodzaju danych do odczytu
-Aby przejść na typ odczytu TSV (Tab Separated Values), lub inny format przechowujący pola rozdzielone wybranym
+Aby przejść na typ odczytu TSV (Tab Separated Values) lub inny format przechowujący pola rozdzielone wybranym
 znakiem/sekwencją znaków wystarczy zamienić delimiter przekazany do konstruktora obiektu `Cw2.Parsers.LineDelimitedParser`.
 
 Aby odczytać całkiem inny rodzaj pliku należy utworzyć nową implementację interfejsu `Cw2.Parsers.IObjectParser`
