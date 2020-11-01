@@ -30,12 +30,12 @@ namespace Cw2
         private readonly XmlSerializerNamespaces _xmlSerializerNamespaces;
         private readonly XmlWriterSettings _xmlWriterSettings;
 
-        public ArgumentParser(IReadOnlyList<string> arguments, XmlWriterSettings xmlWriterSettings = null,
+        public ArgumentParser(string[] arguments, XmlWriterSettings xmlWriterSettings = null,
             XmlSerializerNamespaces xmlSerializerNamespaces = null)
         {
             _xmlSerializerNamespaces = xmlSerializerNamespaces;
             _xmlWriterSettings = xmlWriterSettings;
-            VerifyNumberOfArguments(arguments);
+            arguments = VerifyNumberOfArguments(arguments);
             InputReader = new StreamReader(TryToOpenPath(arguments[InputPathIndex], File.OpenRead));
             ObjectSerializer = DetermineCorrectSerializer(arguments[SerializationFormatIndex]);
             OutputWriter = OpenAndClearOutput(arguments[OutputPathIndex]);
@@ -45,13 +45,14 @@ namespace Cw2
         public TextWriter OutputWriter { get; }
         public IObjectSerializer<T> ObjectSerializer { get; }
 
-        private static void VerifyNumberOfArguments(IReadOnlyCollection<string> arguments)
+        private static string[] VerifyNumberOfArguments(string[] arguments)
         {
-            if (arguments.Count == 3 && !arguments.Any(string.IsNullOrWhiteSpace)) return;
+            if (arguments.Length == 3 && !arguments.Any(string.IsNullOrWhiteSpace)) return arguments;
             var numberOfTrimmedArguments = arguments.Count(argument => !string.IsNullOrWhiteSpace(argument));
-            throw LogException(
+            LogException(
                 new ArgumentException(
-                    $"Niepoprawna liczba argumentów! Wymagana 3, Podano {numberOfTrimmedArguments}!"));
+                    $"Niepoprawna liczba argumentów! Wymagana 3, Podano [{numberOfTrimmedArguments}]!"));
+            return new[] {"data.csv", "result.xml", "xml"};
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace Cw2
                 "xml" => new XmlSerializer<T>(_xmlWriterSettings, _xmlSerializerNamespaces),
                 "json" => new JsonSerializer<T>(),
                 _ => throw LogException(
-                    new ArgumentException($"Podano nieoczekiwany format wyjściowy: {serializerName}!"))
+                    new ArgumentException($"Podano nieoczekiwany format wyjściowy: [{serializerName}]!"))
             };
         }
 
@@ -88,16 +89,16 @@ namespace Cw2
             }
             catch (Exception ex) when (ex is PathTooLongException || ex is ArgumentException)
             {
-                throw LogException(new ArgumentException($"Niepoprawna ścieżka: {path}!"));
+                throw LogException(new ArgumentException($"Niepoprawna ścieżka: [{path}]!"));
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                throw LogException(new FileNotFoundException($"Plik o nazwie {path} nie istnieje!"));
+                throw LogException(new FileNotFoundException($"Plik pod ścieżką: [{path}] nie istnieje!"));
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is NotSupportedException ||
                                        ex is IOException)
             {
-                throw LogException(new IOException($"Brak dostępu do pliku {path}!"));
+                throw LogException(new IOException($"Brak dostępu do pliku pod ścieżką: [{path}]!"));
             }
         }
     }

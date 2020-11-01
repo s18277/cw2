@@ -44,7 +44,7 @@ namespace Cw2
                 arguments.InputReader, arguments.OutputWriter, students => new UniversityData(students, Author));
         }
 
-        private static ArgumentParser<UniversityData> ParseArguments(IReadOnlyList<string> arguments)
+        private static ArgumentParser<UniversityData> ParseArguments(string[] arguments)
         {
             var xmlSerializerNamespaces = new XmlSerializerNamespaces();
             xmlSerializerNamespaces.Add("", "");
