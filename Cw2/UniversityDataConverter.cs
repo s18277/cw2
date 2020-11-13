@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Cw2.Models;
@@ -23,25 +22,17 @@ namespace Cw2
 
         private static void Main(string[] arguments)
         {
-            ConfigureErrorLogging();
-            PrepareUniversityDataConverter(ParseArguments(arguments)).Convert();
-        }
-
-        private static void ConfigureErrorLogging()
-        {
-            var logFile = File.OpenWrite(ErrorLogPath);
-            logFile.SetLength(0);
-            logFile.Flush();
-            var errorWriter = new StreamWriter(logFile);
-            Logger.SetErrorWriter(errorWriter);
-        }
-
-        private static DataConverter<ICollection<Student>, UniversityData> PrepareUniversityDataConverter(
-            ArgumentParser<UniversityData> arguments)
-        {
+            Logger.SetLogPath(ErrorLogPath);
+            using var argumentParser = ParseArguments(arguments);
+            // StreamReader plików wejściowych i StreamWriter plików wyjściowych są otwierane poza konstruktorem
+            // aby uniknąć wyjątków I/O w samym konstruktorze.
+            argumentParser.OpenStreams();
             var studentParser = new LineDelimitedParser<Student>(Delimiter, new FieldsToStudentParser());
-            return new DataConverter<ICollection<Student>, UniversityData>(studentParser, arguments.ObjectSerializer,
-                arguments.InputReader, arguments.OutputWriter, students => new UniversityData(students, Author));
+            var universityDataConverter = new DataConverter<ICollection<Student>, UniversityData>(studentParser,
+                argumentParser.ObjectSerializer,
+                argumentParser.InputReader, argumentParser.OutputWriter,
+                students => new UniversityData(students, Author));
+            universityDataConverter.Convert();
         }
 
         private static ArgumentParser<UniversityData> ParseArguments(string[] arguments)

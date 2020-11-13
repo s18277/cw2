@@ -11,17 +11,19 @@ namespace Cw2
     /// </summary>
     public static class Logger
     {
-        private static TextWriter _logger = Console.Error;
+        private static string _logPath;
 
-        public static void SetErrorWriter(TextWriter logWriter)
+        public static void SetLogPath(string logPath)
         {
-            _logger = logWriter;
+            File.WriteAllText(logPath, string.Empty);
+            _logPath = logPath;
         }
 
         public static void Log(object message)
         {
-            _logger.WriteLine(message);
-            _logger.Flush();
+            if (_logPath == null) return;
+            File.AppendAllText(_logPath, message.ToString());
+            File.AppendAllText(_logPath, NewLine);
         }
 
         public static Exception LogException(Exception exception)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -22,11 +21,13 @@ namespace Cw2
     ///     </para>
     /// </summary>
     /// <typeparam name="T">Typ danych które zostaną zapisane do pliku.</typeparam>
-    public class ArgumentParser<T>
+    public class ArgumentParser<T> : IDisposable
     {
         private const int InputPathIndex = 0;
         private const int OutputPathIndex = 1;
         private const int SerializationFormatIndex = 2;
+        private readonly string _inputFilename;
+        private readonly string _outputFilename;
         private readonly XmlSerializerNamespaces _xmlSerializerNamespaces;
         private readonly XmlWriterSettings _xmlWriterSettings;
 
@@ -36,14 +37,20 @@ namespace Cw2
             _xmlSerializerNamespaces = xmlSerializerNamespaces;
             _xmlWriterSettings = xmlWriterSettings;
             arguments = VerifyNumberOfArguments(arguments);
-            InputReader = new StreamReader(TryToOpenPath(arguments[InputPathIndex], File.OpenRead));
+            _inputFilename = arguments[InputPathIndex];
+            _outputFilename = arguments[OutputPathIndex];
             ObjectSerializer = DetermineCorrectSerializer(arguments[SerializationFormatIndex]);
-            OutputWriter = OpenAndClearOutput(arguments[OutputPathIndex]);
         }
 
-        public TextReader InputReader { get; }
-        public TextWriter OutputWriter { get; }
+        public TextReader InputReader { get; private set; }
+        public TextWriter OutputWriter { get; private set; }
         public IObjectSerializer<T> ObjectSerializer { get; }
+
+        public void Dispose()
+        {
+            InputReader?.Dispose();
+            OutputWriter?.Dispose();
+        }
 
         private static string[] VerifyNumberOfArguments(string[] arguments)
         {
@@ -73,7 +80,13 @@ namespace Cw2
             };
         }
 
-        private static TextWriter OpenAndClearOutput(string outputPath)
+        public void OpenStreams()
+        {
+            InputReader = new StreamReader(TryToOpenPath(_inputFilename, File.OpenRead));
+            OutputWriter = OpenAndClearOutput(_outputFilename);
+        }
+
+        private TextWriter OpenAndClearOutput(string outputPath)
         {
             var inputStream = TryToOpenPath(outputPath, File.OpenWrite);
             inputStream.SetLength(0);
